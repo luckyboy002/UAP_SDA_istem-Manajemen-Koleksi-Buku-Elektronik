@@ -51,7 +51,7 @@ class BookCollection:
     def import_csv(self, filename):
         with open(filename, 'r') as file:
             reader = csv.reader(file)
-            next(reader)  # Skip header
+            next(reader)  
             for row in reader:
                 title, author, year, genre = row
                 book = Book(title, author, int(year), genre)
