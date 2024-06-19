@@ -1,0 +1,132 @@
+import csv
+
+class Book:
+    def __init__(self, title, author, year, genre):
+        self.title = title
+        self.author = author
+        self.year = year
+        self.genre = genre
+
+    def __str__(self):
+        return f"{self.title} by {self.author} ({self.year}) - {self.genre}"
+
+class BookCollection:
+    def __init__(self):
+        self.books = []
+
+    def add_book(self, book):
+        self.books.append(book)
+
+    def view_books(self):
+        for book in self.books:
+            print(book)
+
+    def update_book(self, old_title, new_book):
+        for i, book in enumerate(self.books):
+            if book.title == old_title:
+                self.books[i] = new_book
+                return True
+        return False
+
+    def delete_book(self, title):
+        for i, book in enumerate(self.books):
+            if book.title == title:
+                del self.books[i]
+                return True
+        return False
+
+    def sort_books(self, key):
+        if key == 'title':
+            self.books.sort(key=lambda book: book.title)
+        elif key == 'year':
+            self.books.sort(key=lambda book: book.year)
+
+    def search_books(self, keyword):
+        result = []
+        for book in self.books:
+            if keyword.lower() in book.title.lower() or keyword.lower() in book.author.lower():
+                result.append(book)
+        return result
+
+    def import_csv(self, filename):
+        with open(filename, 'r') as file:
+            reader = csv.reader(file)
+            next(reader)  # Skip header
+            for row in reader:
+                title, author, year, genre = row
+                book = Book(title, author, int(year), genre)
+                self.add_book(book)
+
+def main():
+    collection = BookCollection()
+
+    while True:
+        print("\nMenu:")
+        print("1. Tambah Buku")
+        print("2. Lihat Buku")
+        print("3. Update Buku")
+        print("4. Hapus Buku")
+        print("5. Urutkan Buku")
+        print("6. Cari Buku")
+        print("7. Import CSV")
+        print("8. Keluar")
+
+        choice = input("Pilih opsi: ")
+
+        if choice == '1':
+            title = input("Masukkan judul buku: ")
+            author = input("Masukkan penulis buku: ")
+            year = int(input("Masukkan tahun terbit: "))
+            genre = input("Masukkan genre: ")
+            book = Book(title, author, year, genre)
+            collection.add_book(book)
+
+        elif choice == '2':
+            collection.view_books()
+
+        elif choice == '3':
+            old_title = input("Masukkan judul buku yang akan diupdate: ")
+            title = input("Masukkan judul buku baru: ")
+            author = input("Masukkan penulis buku baru: ")
+            year = int(input("Masukkan tahun terbit baru: "))
+            genre = input("Masukkan genre baru: ")
+            new_book = Book(title, author, year, genre)
+            if collection.update_book(old_title, new_book):
+                print("Buku berhasil diupdate.")
+            else:
+                print("Buku tidak ditemukan.")
+
+        elif choice == '4':
+            title = input("Masukkan judul buku yang akan dihapus: ")
+            if collection.delete_book(title):
+                print("Buku berhasil dihapus.")
+            else:
+                print("Buku tidak ditemukan.")
+
+        elif choice == '5':
+            key = input("Urutkan berdasarkan (title/year): ")
+            collection.sort_books(key)
+            print("Buku berhasil diurutkan.")
+
+        elif choice == '6':
+            keyword = input("Masukkan judul atau penulis: ")
+            results = collection.search_books(keyword)
+            if results:
+                for book in results:
+                    print(book)
+            else:
+                print("Buku tidak ditemukan.")
+
+        elif choice == '7':
+            filename = input("Masukkan nama file CSV: ")
+            collection.import_csv(filename)
+            print("Data berhasil diimpor.")
+
+        elif choice == '8':
+            break
+
+        else:
+            print("Opsi tidak valid. Silakan coba lagi.")
+
+if __name__ == "__main__":
+    main()
